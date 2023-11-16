@@ -1,13 +1,12 @@
 import java.io.*;
 
-public class LocalInputOutput {
+public class SaveAndLoad {
     static int row;
     static int col;
 
     static void save(final String path, final int[][]data) throws IOException {
         int[][] drawing = data;
         DataOutputStream out = new DataOutputStream(new FileOutputStream(path));
-
 
         out.writeInt(drawing.length);
         out.writeInt(drawing[0].length);
@@ -19,7 +18,8 @@ public class LocalInputOutput {
         out.flush();
         out.close();
     }
-    static int[][] importFile(final String path) throws IOException {
+
+    static int[][] load(final String path) throws IOException {
         DataInputStream in  = new DataInputStream(new FileInputStream(path));
         row = in.readInt();
         col = in.readInt();

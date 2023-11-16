@@ -143,19 +143,17 @@ public class UI extends JFrame {
 
 			@Override
 			public void mouseDragged(MouseEvent e) {
-				if (paintMode == PaintMode.Pixel && e.getX() >= 0 && e.getY() >= 0) {
-					try {
-						paintPixel(e.getX()/blockSize,e.getY()/blockSize);
-					} catch (IOException e1) {
-						e1.printStackTrace();
+				try {
+					if (paintMode == PaintMode.Pixel && e.getX() >= 0 && e.getY() >= 0) {
+						try {
+							paintPixel(e.getX() / blockSize, e.getY() / blockSize);
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
 					}
-				}
-
-
+				} catch (ArrayIndexOutOfBoundsException ex) {}
 			}
-
 			@Override public void mouseMoved(MouseEvent e) {}
-
 		});
 
 		paintPanel.setPreferredSize(new Dimension(data.length * blockSize, data[0].length * blockSize));
@@ -267,9 +265,9 @@ public class UI extends JFrame {
 				int r = fileChooser.showOpenDialog(null);
 				if (r == JFileChooser.APPROVE_OPTION) {
 					try {
-						temp = LocalInputOutput.importFile(fileChooser.getSelectedFile().getAbsolutePath());
-						for (int i = 0; i < LocalInputOutput.row; i++) {
-							for (int j = 0; j < LocalInputOutput.col; j++) {
+						temp = SaveAndLoad.load(fileChooser.getSelectedFile().getAbsolutePath());
+						for (int i = 0; i < SaveAndLoad.row; i++) {
+							for (int j = 0; j < SaveAndLoad.col; j++) {
 								out.writeInt(0);
 								String p = i + " " + j + " " + temp[i][j];
 								out.writeInt(p.length());
@@ -291,7 +289,7 @@ public class UI extends JFrame {
 				int r = fileChooser.showSaveDialog(null);
 				if (r == JFileChooser.APPROVE_OPTION) {
 					try {
-						LocalInputOutput.save(fileChooser.getSelectedFile().getAbsolutePath(), data);
+						SaveAndLoad.save(fileChooser.getSelectedFile().getAbsolutePath(), data);
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -340,7 +338,7 @@ public class UI extends JFrame {
 		scrollPaneRight.setPreferredSize(new Dimension(300, this.getHeight()));
 		msgPanel.add(scrollPaneRight, BorderLayout.CENTER);
 
-		this.setSize(new Dimension(800, 600));
+		this.setSize(new Dimension(1335, 1095));
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 	}
 
@@ -385,7 +383,7 @@ public class UI extends JFrame {
 	 * change the color of a specific pixel
 	 * @param col, row - the position of the selected pixel
 	 */
-	public void paintPixel(int col, int row) throws IOException {
+	public void paintPixel(int col, int row) throws IOException, ArrayIndexOutOfBoundsException {
 		if (!eraseMode && data[col][row] != selectedColor) saveCurrentState();
 		else if (eraseMode && data[col][row] == selectedColor) saveCurrentState();
 
