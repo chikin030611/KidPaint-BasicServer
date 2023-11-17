@@ -22,7 +22,7 @@ public class LoginUI extends JFrame {
         JPanel panel2 = new JPanel();
 
         JButton btn = new JButton("Start");
-        Label lb = new Label("Username");
+        Label lb = new Label("Please input your name:");
         JTextField username = new JTextField(10);
 
         panel1.add(btn);
