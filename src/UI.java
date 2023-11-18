@@ -197,11 +197,9 @@ public class UI extends JFrame {
 		eraserToggleButton.setSelected(false);
 
 		undoButton = new JButton("Undo");
-		undoButton.addActionListener(e -> undo());
 		toolPanel.add(undoButton);
 
 		redoButton = new JButton("Redo");
-		redoButton.addActionListener(e -> redo());
 		toolPanel.add(redoButton);
 
 		loadToggleButton = new JToggleButton("Import");
@@ -244,6 +242,50 @@ public class UI extends JFrame {
 				paintMode = PaintMode.Pixel;
 			}
 		});
+
+		undoButton.addActionListener(e -> {
+			if (!undoStack.isEmpty()) {
+				redoStack.push(cloneArray(panel)); // Save current state before undoing
+				panel = undoStack.pop(); // Set panel to previous state
+				paintPanel.repaint(); // Redraw the panel
+				// send entire panel state
+				for(int x = 0; x< panel.length; x++) {
+					for (int y = 0; y< panel[0].length; y++) {
+						try {
+							out.writeInt(0);
+							String p = x + " " + y + " " + panel[x][y];
+							out.writeInt(p.length());
+							out.write(p.getBytes(), 0, p.length());
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+
+		redoButton.addActionListener(e -> {
+			if (!redoStack.isEmpty()) {
+				undoStack.push(cloneArray(panel)); // Save current state before redoing
+				panel = redoStack.pop(); // Set panel to next state
+				paintPanel.repaint(); // Redraw the panel
+				// Optionally send the entire panel state to the server
+
+				for(int x = 0; x< panel.length; x++) {
+					for (int y = 0; y< panel[0].length; y++) {
+						try {
+							out.writeInt(0);
+							String p = x + " " + y + " " + panel[x][y];
+							out.writeInt(p.length());
+							out.write(p.getBytes(), 0, p.length());
+						} catch (IOException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+			}
+		});
+
 
 		// Load data
 		loadToggleButton.addActionListener(new ActionListener() {
@@ -430,32 +472,13 @@ public class UI extends JFrame {
 		return filledPixels;
 	}
 
-	/**
-	 * undo the last operation
-	 */
-	public void undo() {
-		if (!undoStack.isEmpty()) {
-			redoStack.push(panel);
-			panel = undoStack.pop();
-			repaintPanel();
+	private int[][] cloneArray(int[][] source) {
+		int[][] clone = new int[source.length][];
+		for (int i = 0; i < source.length; i++) {
+			clone[i] = source[i].clone();
 		}
+		return clone;
 	}
-
-	/**
-	 * redo the last undo operation
-	 */
-	public void redo() {
-		if (!redoStack.isEmpty()) {
-			undoStack.push(panel);
-			panel = redoStack.pop();
-			repaintPanel();
-		}
-	}
-
-	private void repaintPanel() {
-		paintPanel.repaint();
-	}
-
 
 	/**
 	 * set pixel data and block size

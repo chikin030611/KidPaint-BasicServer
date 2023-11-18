@@ -11,6 +11,10 @@ public class LoginUI extends JFrame {
     String serverIp;
     int serverPort;
 
+    /**
+     * The LoginUI class represents the graphical user interface for the login page.
+     * It allows users to input their name and start the application.
+     */
     public LoginUI() {
         this.setTitle("Login Page");
         this.setSize(200, 150);
@@ -41,8 +45,6 @@ public class LoginUI extends JFrame {
 
             btn.setEnabled(false);
             try {
-
-
                 req(username.getText());
             } catch (IOException e) {
                 e.printStackTrace();
@@ -50,15 +52,19 @@ public class LoginUI extends JFrame {
         });
     }
 
+    /**
+     * Sends a request with the given username to the server and establishes a connection.
+     * 
+     * @param username the username to be sent to the server
+     * @throws UnknownHostException if the IP address of the server is unknown
+     * @throws IOException if an I/O error occurs while sending or receiving data
+     */
     void req(String username) throws UnknownHostException, IOException {
-
-
         DatagramSocket socket = new DatagramSocket();
         DatagramPacket packet = new DatagramPacket(username.getBytes(), username.length(),
                 InetAddress.getByName("255.255.255.255"), 5555);
         socket.send(packet);
         DatagramPacket received = new DatagramPacket(new byte[1024], 1024);
-
 
         while (true) {
             System.out.println("Listening...");
@@ -84,7 +90,6 @@ public class LoginUI extends JFrame {
                 break;
             }
         }
-
     }
 
 }

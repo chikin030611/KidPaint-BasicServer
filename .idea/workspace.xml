@@ -47,7 +47,7 @@
       <recent name="" />
     </key>
   </component>
-  <component name="RunManager">
+  <component name="RunManager" selected="Application.KidPaint2">
     <configuration name="KidPaint" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="KidPaint" />
       <module name="KidPaint-BasicServer" />
@@ -55,9 +55,31 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="KidPaint2" type="Application" factoryName="Application">
+      <option name="ALTERNATIVE_JRE_PATH" value="1.8" />
+      <option name="ALTERNATIVE_JRE_PATH_ENABLED" value="true" />
+      <option name="MAIN_CLASS_NAME" value="KidPaint" />
+      <module name="KidPaint-BasicServer" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Server" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="Server" />
+      <module name="KidPaint-BasicServer" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.KidPaint2" />
+      <item itemvalue="Application.KidPaint" />
+      <item itemvalue="Application.Server" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Application.KidPaint" />
+        <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>
   </component>
