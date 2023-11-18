@@ -22,32 +22,30 @@ public class LoginUI extends JFrame {
 
         Container container = this.getContentPane();
         container.setLayout(new BorderLayout());
-        JPanel panel1 = new JPanel();
-        JPanel panel2 = new JPanel();
 
-        JButton btn = new JButton("Start");
-        Label lb = new Label("Please input your name:");
-        JTextField username = new JTextField(10);
+        JPanel usernamePanel = new JPanel();
+        JPanel submitPanel = new JPanel();
 
-        panel1.add(btn);
-        panel2.add(lb);
-        panel2.add(username);
+        Label label = new Label("Please input your name:");
+        JTextField usernameTextField = new JTextField(10);
+        JButton submitButton = new JButton("Submit");
 
-        container.add(panel2);
-        container.add(panel1, BorderLayout.SOUTH);
+        submitPanel.add(label);
+        submitPanel.add(usernameTextField);
+        usernamePanel.add(submitButton);
 
+        container.add(usernamePanel, BorderLayout.SOUTH);
+        container.add(submitPanel);
 
-        btn.addActionListener( i -> {
-            // change username to anonymous is no input
-            if (username.getText().equals("")) {
-                username.setText("anonymous");
-            }
+        submitButton.addActionListener(e -> {
+            String username = usernameTextField.getText();
 
-            btn.setEnabled(false);
+            if (username.equals("")) username = "Anonymous";
+            submitButton.setEnabled(false);
             try {
-                req(username.getText());
-            } catch (IOException e) {
-                e.printStackTrace();
+                req(username);
+            } catch (IOException ex) {
+                ex.printStackTrace();
             }
         });
     }
@@ -74,8 +72,7 @@ public class LoginUI extends JFrame {
 
             if (content != null) {
                 serverIp = received.getAddress().toString();
-                // remove the first "/" of the address string
-                serverIp = serverIp.substring(1);
+                serverIp = serverIp.substring(1);   // remove the first "/" of the address string
                 serverPort = Integer.parseInt(content);
                 System.out.println("Server IP: " + serverIp);
                 System.out.println("Server Port: " + serverPort);
@@ -91,5 +88,4 @@ public class LoginUI extends JFrame {
             }
         }
     }
-
 }

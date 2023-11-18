@@ -18,8 +18,13 @@ public class Server {
     ArrayList<Client> list = new ArrayList<>();
     int[][] data = new int[50][50];
 
+    /**
+     * The Server class represents a server that listens for incoming connections and handles client requests.
+     * It uses a DatagramSocket to receive messages from clients and a ServerSocket to accept TCP connections.
+     * When a client connects, a new thread is created to handle the client's requests.
+     */
     public Server() throws IOException {
-        String msg = "8080";
+        String message = "8080";
         DatagramSocket socket = new DatagramSocket(5555);
         DatagramPacket packet;
         DatagramPacket receivedPacket = new DatagramPacket(new byte[1024], 1024);
@@ -34,7 +39,7 @@ public class Server {
 
             if (content != null) {
                 int port = receivedPacket.getPort();
-                packet = new DatagramPacket(msg.getBytes(), msg.length(), InetAddress.getByName("255.255.255.255"),
+                packet = new DatagramPacket(message.getBytes(), message.length(), InetAddress.getByName("255.255.255.255"),
                         port);
                 System.out.println(receivedPacket.getAddress());
                 System.out.println(receivedPacket.getPort());
@@ -74,6 +79,12 @@ public class Server {
         }
     }
 
+    /**
+     * Serves the client by establishing a connection and handling data communication.
+     * 
+     * @param client The client to serve.
+     * @throws IOException If an I/O error occurs.
+     */
     private void serve(Client client) throws IOException {
         Socket clientSocket = client.socket;
         byte[] buffer = new byte[1024];
@@ -112,6 +123,13 @@ public class Server {
         }
     }
 
+    /**
+     * Sends the specified data to all connected clients.
+     *
+     * @param data The byte array containing the data to be sent.
+     * @param len The length of the data to be sent.
+     * @param type The type of the data to be sent.
+     */
     private void send(byte[] data, int len, int type) {
         synchronized (list) {
             for (int i = 0; i < list.size(); i++) {
@@ -128,6 +146,12 @@ public class Server {
         }
     }
 
+    /**
+     * The main method is the entry point of the program.
+     * It creates a new instance of the Server class and handles any IOException that may occur.
+     *
+     * @param args The command line arguments passed to the program.
+     */
     public static void main(String[] args) {
         try {
             new Server();

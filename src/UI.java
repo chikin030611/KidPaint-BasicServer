@@ -3,8 +3,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.RenderingHints;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -26,9 +24,11 @@ import javax.swing.border.LineBorder;
 enum PaintMode {Pixel, Area};
 
 public class UI extends JFrame {
+
+	/** Variable Declarition */
 	private JTextField messageField;
 	private JTextArea chatArea;
-	private JPanel colorPickerPanel;
+	private JPanel pnlColorPicker;
 	private JPanel paintPanel;
 	private JToggleButton penToggleButton;
 	private JToggleButton bucketToggleButton;
@@ -49,7 +49,7 @@ public class UI extends JFrame {
 	private Stack<int[][]> undoStack = new Stack<>();
 	private Stack<int[][]> redoStack = new Stack<>();
 	PaintMode paintMode = PaintMode.Pixel;
-
+	/** End of Variable Declaration */
 
 	public static UI getInstance() {
 		return instance;
@@ -57,12 +57,10 @@ public class UI extends JFrame {
 
 	/**
 	 * get the instance of UI. Singleton design pattern.
-	 * @return
 	 */
 	public static UI getInstance(String serverIP, int port, String name) throws IOException {
 		if (instance == null)
 			instance = new UI(serverIP, port, name);
-
 		return instance;
 	}
 
@@ -127,8 +125,8 @@ public class UI extends JFrame {
 				if (paintMode == PaintMode.Area && e.getX() >= 0 && e.getY() >= 0) {
 					try {
 						paintArea(e.getX()/blockSize, e.getY()/blockSize);
-					} catch (IOException e1) {
-						e1.printStackTrace();
+					} catch (IOException ex) {
+						ex.printStackTrace();
 					}
 				}
 			}
@@ -156,17 +154,17 @@ public class UI extends JFrame {
 
 		basePanel.add(scrollPaneLeft, BorderLayout.CENTER);
 
-		JPanel toolPanel = new JPanel();
-		basePanel.add(toolPanel, BorderLayout.NORTH);
-		toolPanel.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		JPanel toolPnl = new JPanel();
+		basePanel.add(toolPnl, BorderLayout.NORTH);
+		toolPnl.setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
 
-		colorPickerPanel = new JPanel();
-		colorPickerPanel.setPreferredSize(new Dimension(24, 24));
-		colorPickerPanel.setBackground(new Color(selectedColor));
-		colorPickerPanel.setBorder(new LineBorder(new Color(0, 0, 0)));
+		pnlColorPicker = new JPanel();
+		pnlColorPicker.setPreferredSize(new Dimension(24, 24));
+		pnlColorPicker.setBackground(new Color(selectedColor));
+		pnlColorPicker.setBorder(new LineBorder(new Color(0, 0, 0)));
 
 		// show the color picker
-		colorPickerPanel.addMouseListener(new MouseListener() {
+		pnlColorPicker.addMouseListener(new MouseListener() {
 			@Override public void mouseClicked(MouseEvent e) {}
 			@Override public void mouseEntered(MouseEvent e) {}
 			@Override public void mouseExited(MouseEvent e) {}
@@ -175,72 +173,63 @@ public class UI extends JFrame {
 			@Override
 			public void mouseReleased(MouseEvent e) {
 				ColorPicker picker = ColorPicker.getInstance(UI.instance);
-				Point location = colorPickerPanel.getLocationOnScreen();
-				location.y += colorPickerPanel.getHeight();
+				Point location = pnlColorPicker.getLocationOnScreen();
+				location.y += pnlColorPicker.getHeight();
 				picker.setLocation(location);
 				picker.setVisible(true);
 			}
 
 		});
 
-		toolPanel.add(colorPickerPanel);
+		toolPnl.add(pnlColorPicker);
 
 		penToggleButton = new JToggleButton("Pen");
 		penToggleButton.setSelected(true);
-		toolPanel.add(penToggleButton);
+		toolPnl.add(penToggleButton);
 
 		bucketToggleButton = new JToggleButton("Bucket");
-		toolPanel.add(bucketToggleButton);
+		toolPnl.add(bucketToggleButton);
 
 		eraserToggleButton = new JToggleButton("Eraser");
-		toolPanel.add(eraserToggleButton);
+		toolPnl.add(eraserToggleButton);
 		eraserToggleButton.setSelected(false);
 
 		undoButton = new JButton("Undo");
-		toolPanel.add(undoButton);
+		toolPnl.add(undoButton);
 
 		redoButton = new JButton("Redo");
-		toolPanel.add(redoButton);
+		toolPnl.add(redoButton);
 
 		loadToggleButton = new JToggleButton("Import");
-		toolPanel.add(loadToggleButton);
+		toolPnl.add(loadToggleButton);
 		loadToggleButton.setSelected(false);
 
 		saveToggleButton = new JToggleButton("Save");
-		toolPanel.add(saveToggleButton);
+		toolPnl.add(saveToggleButton);
 		saveToggleButton.setSelected(false);
 
-		penToggleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				penToggleButton.setSelected(true);
-				bucketToggleButton.setSelected(false);
-				eraserToggleButton.setSelected(false);
-				eraserMode = false;
-				paintMode = PaintMode.Pixel;
-			}
+		penToggleButton.addActionListener(e -> {
+			penToggleButton.setSelected(true);
+			bucketToggleButton.setSelected(false);
+			eraserToggleButton.setSelected(false);
+			eraserMode = false;
+			paintMode = PaintMode.Pixel;
 		});
 
-		bucketToggleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				penToggleButton.setSelected(false);
-				bucketToggleButton.setSelected(true);
-				eraserToggleButton.setSelected(false);
-				eraserMode = false;
-				paintMode = PaintMode.Area;
-			}
+		bucketToggleButton.addActionListener(e-> {
+			penToggleButton.setSelected(false);
+			bucketToggleButton.setSelected(true);
+			eraserToggleButton.setSelected(false);
+			eraserMode = false;
+			paintMode = PaintMode.Area;
 		});
 
-		eraserToggleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				eraserToggleButton.setSelected(true);
-				penToggleButton.setSelected(false);
-				bucketToggleButton.setSelected(false);
-				eraserMode = true;
-				paintMode = PaintMode.Pixel;
-			}
+		eraserToggleButton.addActionListener(e ->{
+			eraserToggleButton.setSelected(true);
+			penToggleButton.setSelected(false);
+			bucketToggleButton.setSelected(false);
+			eraserMode = true;
+			paintMode = PaintMode.Pixel;
 		});
 
 		undoButton.addActionListener(e -> {
@@ -269,8 +258,7 @@ public class UI extends JFrame {
 				undoStack.push(cloneArray(panel)); // Save current state before redoing
 				panel = redoStack.pop(); // Set panel to next state
 				paintPanel.repaint(); // Redraw the panel
-				// Optionally send the entire panel state to the server
-
+				// send entire panel state
 				for(int x = 0; x< panel.length; x++) {
 					for (int y = 0; y< panel[0].length; y++) {
 						try {
@@ -288,44 +276,38 @@ public class UI extends JFrame {
 
 
 		// Load data
-		loadToggleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int[][] temp;
-				int r = fileChooser.showOpenDialog(null);
-				if (r == JFileChooser.APPROVE_OPTION) {
-					try {
-						temp = SaveAndLoad.load(fileChooser.getSelectedFile().getAbsolutePath());
-						for (int i = 0; i < SaveAndLoad.row; i++) {
-							for (int j = 0; j < SaveAndLoad.col; j++) {
-								out.writeInt(0);
-								String p = i + " " + j + " " + temp[i][j];
-								out.writeInt(p.length());
-								out.write(p.getBytes(), 0, p.length());
-							}
+		loadToggleButton.addActionListener(e -> {
+			int[][] temp;
+			int r = fileChooser.showOpenDialog(null);
+			if (r == JFileChooser.APPROVE_OPTION) {
+				try {
+					temp = SaveAndLoad.load(fileChooser.getSelectedFile().getAbsolutePath());
+					for (int i = 0; i < SaveAndLoad.row; i++) {
+						for (int j = 0; j < SaveAndLoad.col; j++) {
+							out.writeInt(0);
+							String p = i + " " + j + " " + temp[i][j];
+							out.writeInt(p.length());
+							out.write(p.getBytes(), 0, p.length());
 						}
-					} catch (Exception e) {
-						e.printStackTrace();
 					}
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-				loadToggleButton.setSelected(false);
 			}
+			loadToggleButton.setSelected(false);
 		});
 
 		// Save file
-		saveToggleButton.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent arg0) {
-				int r = fileChooser.showSaveDialog(null);
-				if (r == JFileChooser.APPROVE_OPTION) {
-					try {
-						SaveAndLoad.save(fileChooser.getSelectedFile().getAbsolutePath(), panel);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
+		saveToggleButton.addActionListener(e -> {
+			int r = fileChooser.showSaveDialog(null);
+			if (r == JFileChooser.APPROVE_OPTION) {
+				try {
+					SaveAndLoad.save(fileChooser.getSelectedFile().getAbsolutePath(), panel);
+				} catch (Exception ex) {
+					ex.printStackTrace();
 				}
-				saveToggleButton.setSelected(false);
 			}
+			saveToggleButton.setSelected(false);
 		});
 
 		JPanel messagePanel = new JPanel();
@@ -347,7 +329,6 @@ public class UI extends JFrame {
 				if (e.getKeyCode() == 10) {		// if the user press ENTER
 					onTextInputted(messageField.getText());
 					messageField.setText("");
-					// send data to server
 				}
 			}
 		});
@@ -362,7 +343,7 @@ public class UI extends JFrame {
 
 		this.setSize(new Dimension(1335, 1095));
 		this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-	}
+	} // End of constructor
 
 	/**
 	 * it will be invoked if the user selected the specific color through the color picker
@@ -371,7 +352,7 @@ public class UI extends JFrame {
 	public void selectColor(int colorValue) {
 		SwingUtilities.invokeLater(()->{
 			selectedColor = colorValue;
-			colorPickerPanel.setBackground(new Color(colorValue));
+			pnlColorPicker.setBackground(new Color(colorValue));
 		});
 	}
 
@@ -380,8 +361,6 @@ public class UI extends JFrame {
 	 * @param text - user inputted text
 	 */
 	private void onTextInputted(String text) {
-//		chatArea.setText(chatArea.getText() + text + "\n");
-
 		try {
 			text = name + ": " + text;
 			out.writeInt(-1);
@@ -392,6 +371,13 @@ public class UI extends JFrame {
 		}
 	}
 
+	/**
+	 * Saves the current state of the panel into the undo stack.
+	 * The current state is represented by a 2D array of integers.
+	 * Each element in the array represents the color of a pixel in the panel.
+	 * The method copies the contents of the panel into a new array and pushes it onto the undo stack.
+	 * After saving the current state, the redo stack is cleared.
+	 */
 	private void saveCurrentState() {
 		int[][] currentState = new int[panel.length][panel[0].length];
 		for (int i = 0; i < panel.length; i++) {
@@ -472,6 +458,12 @@ public class UI extends JFrame {
 		return filledPixels;
 	}
 
+	/**
+	 * Creates a deep copy of a 2D integer array.
+	 * 
+	 * @param source the original array to be cloned
+	 * @return a new array that is a deep copy of the source array
+	 */
 	private int[][] cloneArray(int[][] source) {
 		int[][] clone = new int[source.length][];
 		for (int i = 0; i < source.length; i++) {
@@ -492,6 +484,11 @@ public class UI extends JFrame {
 		paintPanel.repaint();
 	}
 
+	/**
+	 * Receives data from the specified socket and updates the UI accordingly.
+	 * 
+	 * @param socket the socket to receive data from
+	 */
 	private void receiveData(Socket socket) {
 		try {
 			byte[] buffer = new byte[1024];
